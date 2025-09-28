@@ -3,12 +3,10 @@ echo "パスワードマネージャーへようこそ！"
 
 while true; do
     echo "次の選択肢から入力してください(Add Password/Get Password/Exit)："
-
     read input
 
-    # 条件分岐
-
-    # Add Password が入力された場合
+  # 条件分岐
+  # Add Password が入力された場合
   if [  "$input" = "Add Password" ]; then
     echo  "サービス名を入力してください："
     read service_name
@@ -18,34 +16,32 @@ while true; do
     read password
     echo "パスワードの追加は成功しました。"
 
-    #暗号化処理
-
-    #金庫のチェック
+    # 暗号化処理
+    # 金庫のチェック
     if  [ -f passwords.txt.gpg ]; then
-        #金庫がある場合、中身をtemp.txtに取り出す
+        # 金庫がある場合、中身をtemp.txtに取り出す
         gpg --batch --passphrase "aaa" -d passwords.txt.gpg > temp.txt
     else
-        #金庫がない場合、空のtemp.txtを作る
+        # 金庫がない場合、空のtemp.txtを作る
         touch temp.txt
     fi
 
-    # passwords.txtに保存
+    # temp.txtに保存
     echo "サービス名：$service_name" >> temp.txt
     echo "ユーザー名：$username" >> temp.txt
     echo "パスワード：$password" >> temp.txt
 
-       
-    # temp.txtを暗号化して金庫に
+    # temp.txtを暗号化して金庫に移し、temp.txtを削除
     gpg --batch --passphrase "aaa" -c temp.txt
     mv temp.txt.gpg passwords.txt.gpg
     rm temp.txt
 
-
+  # Get Password が入力された場合
   elif [ "$input" = "Get Password" ]; then
     echo  "サービス名を入力してください："
     read service_name
 
-    #暗号化ファイルが存在するかチェック
+    # 暗号化ファイルが存在するかチェック
     if [ ! -f passwords.txt.gpg ]; then
         echo "そのサービスは登録されていません。"
         continue
